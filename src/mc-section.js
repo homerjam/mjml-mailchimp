@@ -1,0 +1,343 @@
+import { BodyComponent } from 'mjml-core'
+import { flow, identity, join, filter } from 'lodash/fp'
+
+import widthParser from 'mjml-core/lib/helpers/widthParser'
+
+const makeBackgroundString = flow(filter(identity), join(' '))
+export default class McSection extends BodyComponent {
+  static allowedAttributes = {
+    'mc:hideable': 'boolean',
+    'mc:repeatable': 'string',
+    'mc:variant': 'string',
+    'background-color': 'color',
+    'background-url': 'string',
+    'background-repeat': 'enum(repeat/no-repeat)',
+    'background-size': 'string',
+    border: 'string',
+    'border-bottom': 'string',
+    'border-left': 'string',
+    'border-radius': 'string',
+    'border-right': 'string',
+    'border-top': 'string',
+    direction: 'enum(ltr,rtl)',
+    'full-width': 'enum(full-width)',
+    padding: 'unit(px,%){1,4}',
+    'padding-top': 'unit(px,%)',
+    'padding-bottom': 'unit(px,%)',
+    'padding-left': 'unit(px,%)',
+    'padding-right': 'unit(px,%)',
+    'text-align': 'enum(left,center,right)',
+    'text-padding': 'unit(px,%){1,4}',
+    'vertical-align': 'enum(bottom,middle,top)',
+  }
+
+  static defaultAttributes = {
+    'background-repeat': 'repeat',
+    'background-size': 'auto',
+    direction: 'ltr',
+    padding: '20px 0',
+    'text-align': 'center',
+    'text-padding': '4px 4px 4px 0',
+    'vertical-align': 'top',
+  }
+
+  getChildContext() {
+    const { containerWidth } = this.context
+
+    const paddingSize =
+      this.getShorthandAttrValue('padding', 'left') +
+      this.getShorthandAttrValue('padding', 'right')
+
+    const { parsedWidth } = widthParser(containerWidth, {
+      parseFloatToInt: false,
+    })
+
+    return {
+      ...this.context,
+      containerWidth: `${parsedWidth - paddingSize}px`,
+    }
+  }
+
+  getStyles() {
+    const { containerWidth } = this.context
+
+    const fullWidth = this.isFullWidth()
+
+    const background = this.getAttribute('background-url')
+      ? { background: this.getBackground() }
+      : {
+          background: this.getAttribute('background-color'),
+          'background-color': this.getAttribute('background-color'),
+        }
+
+    return {
+      tableFullwidth: {
+        ...(fullWidth ? background : {}),
+        width: '100%',
+        'border-radius': this.getAttribute('border-radius'),
+      },
+      table: {
+        ...(fullWidth ? {} : background),
+        width: '100%',
+        'border-radius': this.getAttribute('border-radius'),
+      },
+      td: {
+        border: this.getAttribute('border'),
+        'border-bottom': this.getAttribute('border-bottom'),
+        'border-left': this.getAttribute('border-left'),
+        'border-right': this.getAttribute('border-right'),
+        'border-top': this.getAttribute('border-top'),
+        direction: this.getAttribute('direction'),
+        'font-size': '0px',
+        padding: this.getAttribute('padding'),
+        'padding-bottom': this.getAttribute('padding-bottom'),
+        'padding-left': this.getAttribute('padding-left'),
+        'padding-right': this.getAttribute('padding-right'),
+        'padding-top': this.getAttribute('padding-top'),
+        'text-align': this.getAttribute('text-align'),
+        'vertical-align': this.getAttribute('vertical-align'),
+      },
+      div: {
+        ...(fullWidth ? {} : background),
+        Margin: '0px auto',
+        'border-radius': this.getAttribute('border-radius'),
+        'max-width': containerWidth,
+      },
+      innerDiv: {
+        'line-height': '0',
+        'font-size': '0',
+      },
+    }
+  }
+
+  getBackground = () =>
+    makeBackgroundString([
+      this.getAttribute('background-color'),
+      ...(this.hasBackground()
+        ? [
+            `url(${this.getAttribute('background-url')})`,
+            `top center / ${this.getAttribute('background-size')}`,
+            this.getAttribute('background-repeat'),
+          ]
+        : []),
+    ])
+
+  hasBackground() {
+    return this.getAttribute('background-url') != null
+  }
+
+  isFullWidth() {
+    return this.getAttribute('full-width') === 'full-width'
+  }
+
+  renderBefore() {
+    const { containerWidth } = this.context
+
+    return `
+      <!--[if mso | IE]>
+      <table
+        ${this.htmlAttributes({
+          align: 'center',
+          border: '0',
+          cellpadding: '0',
+          cellspacing: '0',
+          class: this.getAttribute('css-class')
+            ? this.getAttribute('css-class')
+                .split(' ')
+                .map(c => `${c}-outlook`)
+                .join(' ')
+            : null,
+          style: { width: `${containerWidth}` },
+          width: parseInt(containerWidth, 10),
+        })}
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    `
+  }
+
+  renderAfter() {
+    // eslint-disable-line class-methods-use-this
+    return `
+      <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+      <![endif]-->
+    `
+  }
+
+  renderWrappedChildren() {
+    const { children } = this.props
+
+    return `
+      <!--[if mso | IE]>
+        <tr>
+      <![endif]-->
+      ${this.renderChildren(children, {
+        renderer: component =>
+          component.constructor.isRawElement()
+            ? component.render()
+            : `
+          <!--[if mso | IE]>
+            <td
+              ${component.htmlAttributes({
+                align: component.getAttribute('align'),
+                class: component.getAttribute('css-class')
+                  ? component
+                      .getAttribute('css-class')
+                      .split(' ')
+                      .map(c => `${c}-outlook`)
+                      .join(' ')
+                  : null,
+                style: 'tdOutlook',
+              })}
+            >
+          <![endif]-->
+            ${component.render()}
+          <!--[if mso | IE]>
+            </td>
+          <![endif]-->
+    `,
+      })}
+
+      <!--[if mso | IE]>
+        </tr>
+      <![endif]-->
+    `
+  }
+
+  renderWithBackground(content) {
+    const fullWidth = this.isFullWidth()
+
+    const { containerWidth } = this.context
+
+    return `
+      <!--[if mso | IE]>
+        <v:rect ${this.htmlAttributes({
+          style: fullWidth
+            ? { 'mso-width-percent': '1000' }
+            : { width: containerWidth },
+          'xmlns:v': 'urn:schemas-microsoft-com:vml',
+          fill: 'true',
+          stroke: 'false',
+        })}>
+        <v:fill ${this.htmlAttributes({
+          origin: '0.5, 0',
+          position: '0.5, 0',
+          src: this.getAttribute('background-url'),
+          color: this.getAttribute('background-color'),
+          type: 'tile',
+        })} />
+        <v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
+      <![endif]-->
+          ${content}
+        <!--[if mso | IE]>
+        </v:textbox>
+      </v:rect>
+    <![endif]-->
+    `
+  }
+
+  renderSection() {
+    const hasBackground = this.hasBackground()
+
+    return `
+      <div ${this.htmlAttributes({
+        class: this.isFullWidth() ? null : this.getAttribute('css-class'),
+        style: 'div',
+        'mc:hideable': this.getAttribute('mc:hideable'),
+        'mc:repeatable': this.getAttribute('mc:repeatable'),
+        'mc:variant': this.getAttribute('mc:variant'),
+      })}>
+        ${hasBackground
+          ? `<div ${this.htmlAttributes({ style: 'innerDiv' })}>`
+          : ''}
+        <table
+          ${this.htmlAttributes({
+            align: 'center',
+            background: this.isFullWidth()
+              ? null
+              : this.getAttribute('background-url'),
+            border: '0',
+            cellpadding: '0',
+            cellspacing: '0',
+            role: 'presentation',
+            style: 'table',
+          })}
+        >
+          <tbody>
+            <tr>
+              <td
+                ${this.htmlAttributes({
+                  style: 'td',
+                })}
+              >
+                <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                <![endif]-->
+                  ${this.renderWrappedChildren()}
+                <!--[if mso | IE]>
+                  </table>
+                <![endif]-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        ${hasBackground ? '</div>' : ''}
+      </div>
+    `
+  }
+
+  renderFullWidth() {
+    const content = this.hasBackground()
+      ? this.renderWithBackground(`
+        ${this.renderBefore()}
+        ${this.renderSection()}
+        ${this.renderAfter()}
+      `)
+      : `
+        ${this.renderBefore()}
+        ${this.renderSection()}
+        ${this.renderAfter()}
+      `
+
+    return `
+      <table
+        ${this.htmlAttributes({
+          align: 'center',
+          class: this.getAttribute('css-class'),
+          background: this.getAttribute('background-url'),
+          border: '0',
+          cellpadding: '0',
+          cellspacing: '0',
+          role: 'presentation',
+          style: 'tableFullwidth',
+        })}
+      >
+        <tbody>
+          <tr>
+            <td>
+              ${content}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    `
+  }
+
+  renderSimple() {
+    const section = this.renderSection()
+
+    return `
+      ${this.renderBefore()}
+      ${this.hasBackground() ? this.renderWithBackground(section) : section}
+      ${this.renderAfter()}
+    `
+  }
+
+  render() {
+    return this.isFullWidth() ? this.renderFullWidth() : this.renderSimple()
+  }
+}
