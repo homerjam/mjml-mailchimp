@@ -13,7 +13,7 @@ const { McSection, McImage } = require('mjml-mailchimp');
 registerComponent(McSection);
 registerComponent(McImage);
 registerDependencies({
-  'mc-section': ['mj-column', 'mj-group', 'mj-raw']
+  'mc-section': ['mj-column', 'mj-group', 'mj-raw'],
   'mj-column': ['mc-image'],
   'mj-hero': ['mc-image'],
 });
