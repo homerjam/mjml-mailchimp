@@ -9,6 +9,7 @@ export default class McSection extends BodyComponent {
     'mc:hideable': 'boolean',
     'mc:repeatable': 'string',
     'mc:variant': 'string',
+    'mc:edit': 'string',
     'background-color': 'color',
     'background-url': 'string',
     'background-repeat': 'enum(repeat/no-repeat)',
@@ -250,6 +251,7 @@ export default class McSection extends BodyComponent {
         'mc:hideable': this.getAttribute('mc:hideable'),
         'mc:repeatable': this.getAttribute('mc:repeatable'),
         'mc:variant': this.getAttribute('mc:variant'),
+        'mc:edit': this.getAttribute('mc:edit'),
       })}>
         ${hasBackground
           ? `<div ${this.htmlAttributes({ style: 'innerDiv' })}>`
