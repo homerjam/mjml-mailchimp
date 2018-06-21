@@ -1,6 +1,6 @@
 import { BodyComponent } from 'mjml-core'
 
-export default class MjButton extends BodyComponent {
+export default class McButton extends BodyComponent {
   static endingTag = true
 
   static allowedAttributes = {
@@ -100,7 +100,6 @@ export default class MjButton extends BodyComponent {
           cellspacing: '0',
           role: 'presentation',
           style: 'table',
-          'mc:edit': this.getAttribute('mc:edit'),
         })}
       >
         <tr>
@@ -122,6 +121,7 @@ export default class MjButton extends BodyComponent {
                 rel: this.getAttribute('rel'),
                 style: 'content',
                 target: tag === 'a' ? this.getAttribute('target') : undefined,
+                'mc:edit': this.getAttribute('mc:edit'),
               })}
             >
               ${this.getContent()}
