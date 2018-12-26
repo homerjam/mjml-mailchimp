@@ -9,6 +9,7 @@ export default class McImage extends BodyComponent {
 
   static allowedAttributes = {
     'mc:edit': 'string',
+    'mc:hideable': 'boolean',
     'alt': 'string',
     'href': 'string',
     'src': 'string',
