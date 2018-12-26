@@ -7,6 +7,7 @@ export default class McText extends BodyComponent {
 
   static allowedAttributes = {
     'mc:edit': 'string',
+    'mc:hideable': 'boolean',
     align: 'enum(left,right,center)',
     'background-color': 'color',
     color: 'color',
