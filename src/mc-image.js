@@ -15,29 +15,30 @@ export default class McImage extends BodyComponent {
     'src': 'string',
     'srcset': 'string',
     'title': 'string',
-    align: 'enum(left,center,right)',
-    border: 'string',
+    'align': 'enum(left,center,right)',
+    'border': 'string',
     'border-bottom': 'string',
     'border-left': 'string',
     'border-right': 'string',
     'border-top': 'string',
     'border-radius': 'unit(px,%)',
     'container-background-color': 'string',
-    padding: 'unit(px,%){1,4}',
+    'padding': 'unit(px,%){1,4}',
     'padding-bottom': 'unit(px,%)',
     'padding-left': 'unit(px,%)',
     'padding-right': 'unit(px,%)',
     'padding-top': 'unit(px,%)',
-    height: 'unit(px,%)',
-    width: 'unit(px,%)',
+    'height': 'unit(px,%)',
+    'width': 'unit(px,%)',
   }
 
   static defaultAttributes = {
-    align: 'center',
-    border: '0',
-    height: 'auto',
-    padding: '10px 25px',
-    target: '_blank',
+    'align': 'center',
+    'border': '0',
+    'height': 'auto',
+    'padding': '10px 25px',
+    'target': '_blank',
+    'mc:hideable': false,
   }
 
   getStyles() {
@@ -48,13 +49,13 @@ export default class McImage extends BodyComponent {
 
     return {
       img: {
-        border: this.getAttribute('border'),
+        'border': this.getAttribute('border'),
         'border-radius': this.getAttribute('border-radius'),
-        display: 'block',
-        outline: 'none',
+        'display': 'block',
+        'outline': 'none',
         'text-decoration': 'none',
         'min-width': fullWidth ? '100%' : null,
-        width: fullWidth ? `${parsedWidth}${unit}` : '100%',
+        'width': fullWidth ? `${parsedWidth}${unit}` : '100%',
         'max-width': fullWidth ? '100%' : null,
       },
       td: {
@@ -63,7 +64,7 @@ export default class McImage extends BodyComponent {
       table: {
         'min-width': fullWidth ? '100%' : null,
         'max-width': fullWidth ? '100%' : null,
-        width: fullWidth ? `${parsedWidth}${unit}` : null,
+        'width': fullWidth ? `${parsedWidth}${unit}` : null,
         'border-collapse': 'collapse',
         'border-spacing': '0px',
       },
@@ -114,8 +115,8 @@ export default class McImage extends BodyComponent {
       return `
         <a
           ${this.htmlAttributes({
-            href: this.getAttribute('href'),
-            target: this.getAttribute('target'),
+            'href': this.getAttribute('href'),
+            'target': this.getAttribute('target'),
           })}
         >
           ${img}
@@ -127,21 +128,26 @@ export default class McImage extends BodyComponent {
   }
 
   render() {
+    let attrs = {
+      align: this.getAttribute('align'),
+      'border': '0',
+      'cellpadding': '0',
+      'cellspacing': '0',
+      'role': 'presentation',
+      'style': 'table',
+    }
+
+    if (this.getAttribute('mc:hideable') === true) {
+      attrs['mc:hideable'] = this.getAttribute('mc:hideable')
+    }
+
     return `
       <table
-        ${this.htmlAttributes({
-          align: this.getAttribute('align'),
-          'mc:hideable': this.getAttribute('mc:hideable'),
-          border: '0',
-          cellpadding: '0',
-          cellspacing: '0',
-          role: 'presentation',
-          style: 'table',
-        })}
+        ${this.htmlAttributes(attrs)}
       >
         <tbody>
           <tr>
-            <td ${this.htmlAttributes({ style: 'td' })}>
+            <td ${this.htmlAttributes({ 'style': 'td' })}>
               ${this.renderImage()}
             </td>
           </tr>

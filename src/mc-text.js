@@ -58,13 +58,17 @@ export default class McText extends BodyComponent {
   }
 
   renderContent() {
+    let attrs = {
+      'style': 'text',
+      'mc:edit': this.getAttribute('mc:edit'),
+    }
+
+    if (this.getAttribute('mc:hideable') === true) {
+      attrs['mc:hideable'] = this.getAttribute('mc:hideable')
+    }
     return `
       <div
-        ${this.htmlAttributes({
-          style: 'text',
-          'mc:edit': this.getAttribute('mc:edit'),
-          'mc:hideable': this.getAttribute('mc:hideable'),
-        })}
+        ${this.htmlAttributes(attrs)}
       >
         ${this.getContent()}
       </div>
@@ -73,18 +77,22 @@ export default class McText extends BodyComponent {
 
   render() {
     const height = this.getAttribute('height')
+    let attrs = {
+      role: 'presentation',
+      border: 0,
+      cellpadding: 0,
+      cellspacing: 0,
+      'mc:hideable': this.getAttribute('mc:hideable'),
+    }
+    if (this.getAttribute('mc:hideable') === true) {
+      attrs['mc:hideable'] = this.getAttribute('mc:hideable')
+    }
 
     return height
       ? `
         ${conditionalTag(`
           <table
-            ${this.htmlAttributes({
-                role: 'presentation',
-                border: 0,
-                cellpadding: 0,
-                cellspacing: 0,
-                'mc:hideable': this.getAttribute('mc:hideable'),
-              })}><tr><td height="${height}" style="vertical-align:top;height:${height};">
+            ${this.htmlAttributes(attrs)}><tr><td height="${height}" style="vertical-align:top;height:${height};">
         `)}
         ${this.renderContent()}
         ${conditionalTag(`
