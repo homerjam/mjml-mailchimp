@@ -5,6 +5,7 @@ export default class McButton extends BodyComponent {
 
   static allowedAttributes = {
     'mc:edit': 'string',
+    'mc:hideable': 'boolean',
     align: 'enum(left,center,right)',
     'background-color': 'color',
     'border-bottom': 'string',
