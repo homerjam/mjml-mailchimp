@@ -36,6 +36,7 @@ export default class McText extends BodyComponent {
     'font-size': '13px',
     'line-height': '1',
     padding: '10px 25px',
+    'mc:hideable': false,
   }
 
   getStyles() {
@@ -62,6 +63,7 @@ export default class McText extends BodyComponent {
         ${this.htmlAttributes({
           style: 'text',
           'mc:edit': this.getAttribute('mc:edit'),
+          'mc:hideable': this.getAttribute('mc:hideable'),
         })}
       >
         ${this.getContent()}
@@ -75,7 +77,14 @@ export default class McText extends BodyComponent {
     return height
       ? `
         ${conditionalTag(`
-          <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td height="${height}" style="vertical-align:top;height:${height};">
+          <table
+            ${this.htmlAttributes({
+                role: 'presentation',
+                border: 0,
+                cellpadding: 0,
+                cellspacing: 0,
+                'mc:hideable': this.getAttribute('mc:hideable'),
+              })}><tr><td height="${height}" style="vertical-align:top;height:${height};">
         `)}
         ${this.renderContent()}
         ${conditionalTag(`

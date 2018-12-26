@@ -131,6 +131,7 @@ export default class McImage extends BodyComponent {
       <table
         ${this.htmlAttributes({
           align: this.getAttribute('align'),
+          'mc:hideable': this.getAttribute('mc:hideable'),
           border: '0',
           cellpadding: '0',
           cellspacing: '0',
