@@ -137,7 +137,7 @@ export default class McImage extends BodyComponent {
       'style': 'table',
     }
 
-    if (this.getAttribute('mc:hideable') === true) {
+    if (this.getAttribute('mc:hideable') !== false) {
       attrs['mc:hideable'] = this.getAttribute('mc:hideable')
     }
 
