@@ -5,7 +5,7 @@ export default class McButton extends BodyComponent {
 
   static allowedAttributes = {
     'mc:edit': 'string',
-    'mc:hideable': 'boolean',
+    'mc:hideable': 'string',
     'align': 'enum(left,center,right)',
     'background-color': 'color',
     'border-bottom': 'string',
@@ -53,6 +53,7 @@ export default class McButton extends BodyComponent {
     'text-decoration': 'none',
     'text-transform': 'none',
     'vertical-align': 'middle',
+    'mc:hideable': false
   }
 
   getStyles() {
@@ -89,6 +90,14 @@ export default class McButton extends BodyComponent {
     }
   }
 
+  isHideable() {
+    if (this.getAttribute('mc:hideable') !== false) {
+      return true
+    }
+
+    return false
+  }
+
   render() {
     const tag = this.getAttribute('href') ? 'a' : 'p'
     let attrs = {
@@ -100,8 +109,8 @@ export default class McButton extends BodyComponent {
       'style': 'table',
     }
 
-    if (this.getAttribute('mc:hideable') !== false) {
-      attrs['mc:hideable'] = this.getAttribute('mc:hideable')
+    if (this.isHideable()) {
+      attrs['mc:hideable'] = true
     }
 
     return `

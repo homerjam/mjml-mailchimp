@@ -9,7 +9,7 @@ export default class McImage extends BodyComponent {
 
   static allowedAttributes = {
     'mc:edit': 'string',
-    'mc:hideable': 'boolean',
+    'mc:hideable': 'string',
     'alt': 'string',
     'href': 'string',
     'src': 'string',
@@ -127,6 +127,14 @@ export default class McImage extends BodyComponent {
     return img
   }
 
+  isHideable() {
+    if (this.getAttribute('mc:hideable') !== false) {
+      return true
+    }
+
+    return false
+  }
+
   render() {
     let attrs = {
       align: this.getAttribute('align'),
@@ -137,8 +145,8 @@ export default class McImage extends BodyComponent {
       'style': 'table',
     }
 
-    if (this.getAttribute('mc:hideable') !== false) {
-      attrs['mc:hideable'] = this.getAttribute('mc:hideable')
+    if (this.isHideable()) {
+      attrs['mc:hideable'] = true
     }
 
     return `
