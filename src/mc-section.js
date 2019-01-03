@@ -6,7 +6,7 @@ import widthParser from 'mjml-core/lib/helpers/widthParser'
 const makeBackgroundString = flow(filter(identity), join(' '))
 export default class McSection extends BodyComponent {
   static allowedAttributes = {
-    'mc:hideable': 'boolean',
+    'mc:hideable': 'string',
     'mc:repeatable': 'string',
     'mc:variant': 'string',
     'mc:edit': 'string',
@@ -14,15 +14,15 @@ export default class McSection extends BodyComponent {
     'background-url': 'string',
     'background-repeat': 'enum(repeat/no-repeat)',
     'background-size': 'string',
-    border: 'string',
+    'border': 'string',
     'border-bottom': 'string',
     'border-left': 'string',
     'border-radius': 'string',
     'border-right': 'string',
     'border-top': 'string',
-    direction: 'enum(ltr,rtl)',
+    'direction': 'enum(ltr,rtl)',
     'full-width': 'enum(full-width)',
-    padding: 'unit(px,%){1,4}',
+    'padding': 'unit(px,%){1,4}',
     'padding-top': 'unit(px,%)',
     'padding-bottom': 'unit(px,%)',
     'padding-left': 'unit(px,%)',
@@ -35,11 +35,12 @@ export default class McSection extends BodyComponent {
   static defaultAttributes = {
     'background-repeat': 'repeat',
     'background-size': 'auto',
-    direction: 'ltr',
-    padding: '20px 0',
+    'direction': 'ltr',
+    'padding': '20px 0',
     'text-align': 'center',
     'text-padding': '4px 4px 4px 0',
     'vertical-align': 'top',
+    'mc:hideable': false,
   }
 
   getChildContext() {
@@ -83,14 +84,14 @@ export default class McSection extends BodyComponent {
         'border-radius': this.getAttribute('border-radius'),
       },
       td: {
-        border: this.getAttribute('border'),
+        'border': this.getAttribute('border'),
         'border-bottom': this.getAttribute('border-bottom'),
         'border-left': this.getAttribute('border-left'),
         'border-right': this.getAttribute('border-right'),
         'border-top': this.getAttribute('border-top'),
-        direction: this.getAttribute('direction'),
+        'direction': this.getAttribute('direction'),
         'font-size': '0px',
-        padding: this.getAttribute('padding'),
+        'padding': this.getAttribute('padding'),
         'padding-bottom': this.getAttribute('padding-bottom'),
         'padding-left': this.getAttribute('padding-left'),
         'padding-right': this.getAttribute('padding-right'),
@@ -241,18 +242,30 @@ export default class McSection extends BodyComponent {
     `
   }
 
+  isHideable() {
+    if (this.getAttribute('mc:hideable') !== false) {
+      return true
+    }
+
+    return false
+  }
+
   renderSection() {
     const hasBackground = this.hasBackground()
+    let attrs = {
+      'class': this.isFullWidth() ? null : this.getAttribute('css-class'),
+      'style': 'div',
+      'mc:repeatable': this.getAttribute('mc:repeatable'),
+      'mc:variant': this.getAttribute('mc:variant'),
+      'mc:edit': this.getAttribute('mc:edit'),
+    }
+
+    if (this.isHideable()) {
+      attrs['mc:hideable'] = true
+    }
 
     return `
-      <div ${this.htmlAttributes({
-        class: this.isFullWidth() ? null : this.getAttribute('css-class'),
-        style: 'div',
-        'mc:hideable': this.getAttribute('mc:hideable'),
-        'mc:repeatable': this.getAttribute('mc:repeatable'),
-        'mc:variant': this.getAttribute('mc:variant'),
-        'mc:edit': this.getAttribute('mc:edit'),
-      })}>
+      <div ${this.htmlAttributes(attrs)}>
         ${hasBackground
           ? `<div ${this.htmlAttributes({ style: 'innerDiv' })}>`
           : ''}

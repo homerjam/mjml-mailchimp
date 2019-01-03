@@ -7,34 +7,36 @@ export default class McText extends BodyComponent {
 
   static allowedAttributes = {
     'mc:edit': 'string',
-    align: 'enum(left,right,center)',
+    'mc:hideable': 'string',
+    'align': 'enum(left,right,center)',
     'background-color': 'color',
-    color: 'color',
+    'color': 'color',
     'container-background-color': 'color',
     'font-family': 'string',
     'font-size': 'unit(px,%)',
     'font-style': 'string',
     'font-weight': 'string',
-    height: 'unit(px,%)',
+    'height': 'unit(px,%)',
     'letter-spacing': 'unit(px,%)',
     'line-height': 'unit(px,%)',
     'padding-bottom': 'unit(px,%)',
     'padding-left': 'unit(px,%)',
     'padding-right': 'unit(px,%)',
     'padding-top': 'unit(px,%)',
-    padding: 'unit(px,%){1,4}',
+    'padding': 'unit(px,%){1,4}',
     'text-decoration': 'string',
     'text-transform': 'string',
     'vertical-align': 'string',
   }
 
   static defaultAttributes = {
-    align: 'left',
-    color: '#000000',
+    'align': 'left',
+    'color': '#000000',
     'font-family': 'Ubuntu, Helvetica, Arial, sans-serif',
     'font-size': '13px',
     'line-height': '1',
-    padding: '10px 25px',
+    'padding': '10px 25px',
+    'mc:hideable': false
   }
 
   getStyles() {
@@ -49,19 +51,32 @@ export default class McText extends BodyComponent {
         'text-align': this.getAttribute('align'),
         'text-decoration': this.getAttribute('text-decoration'),
         'text-transform': this.getAttribute('text-transform'),
-        color: this.getAttribute('color'),
-        height: this.getAttribute('height'),
+        'color': this.getAttribute('color'),
+        'height': this.getAttribute('height'),
       },
     }
   }
 
-  renderContent() {
+  isHideable() {
+    if (this.getAttribute('mc:hideable') !== false) {
+      return true
+    }
+
+    return false
+  }
+
+  renderContent(compound = false) {
+    let attrs = {
+      'style': 'text',
+      'mc:edit': this.getAttribute('mc:edit'),
+    }
+
+    if (compound === false && this.isHideable()) {
+      attrs['mc:hideable'] = true
+    }
     return `
       <div
-        ${this.htmlAttributes({
-          style: 'text',
-          'mc:edit': this.getAttribute('mc:edit'),
-        })}
+        ${this.htmlAttributes(attrs)}
       >
         ${this.getContent()}
       </div>
@@ -70,13 +85,23 @@ export default class McText extends BodyComponent {
 
   render() {
     const height = this.getAttribute('height')
+    let attrs = {
+      'role': 'presentation',
+      'border': 0,
+      'cellpadding': 0,
+      'cellspacing': 0
+    }
+    if (this.isHideable()) {
+      attrs['mc:hideable'] = true
+    }
 
     return height
       ? `
         ${conditionalTag(`
-          <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td height="${height}" style="vertical-align:top;height:${height};">
+          <table
+            ${this.htmlAttributes(attrs)}><tr><td height="${height}" style="vertical-align:top;height:${height};">
         `)}
-        ${this.renderContent()}
+        ${this.renderContent(true)}
         ${conditionalTag(`
           </td></tr></table>
         `)}
