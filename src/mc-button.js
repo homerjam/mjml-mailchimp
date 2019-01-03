@@ -120,23 +120,23 @@ export default class McButton extends BodyComponent {
         <tr>
           <td
             ${this.htmlAttributes({
-              align: 'center',
-              bgcolor:
+              'align': 'center',
+              'bgcolor':
                 this.getAttribute('background-color') === 'none'
                   ? undefined
                   : this.getAttribute('background-color'),
-              role: 'presentation',
-              style: 'td',
-              valign: this.getAttribute('vertical-align'),
+              'role': 'presentation',
+              'style': 'td',
+              'valign': this.getAttribute('vertical-align'),
+              'mc:edit': this.getAttribute('mc:edit')
             })}
           >
             <${tag}
               ${this.htmlAttributes({
-                href: this.getAttribute('href'),
-                rel: this.getAttribute('rel'),
-                style: 'content',
-                target: tag === 'a' ? this.getAttribute('target') : undefined,
-                'mc:edit': this.getAttribute('mc:edit'),
+                'href': this.getAttribute('href'),
+                'rel': this.getAttribute('rel'),
+                'style': 'content',
+                'target': tag === 'a' ? this.getAttribute('target') : undefined
               })}
             >
               ${this.getContent()}
