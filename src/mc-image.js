@@ -1,106 +1,35 @@
-import min from 'lodash/min'
+import MjImage from 'mjml-image'
+import { registerDependencies } from 'mjml-validator'
 
-import { BodyComponent } from 'mjml-core'
+registerDependencies({
+  'mj-column': ['mc-image'],
+  'mj-hero': ['mc-image'],
+  'mc-image': [],
+});
 
-import widthParser from 'mjml-core/lib/helpers/widthParser'
-
-export default class McImage extends BodyComponent {
+export default class McImage extends MjImage {
   static tagOmission = true
 
   static allowedAttributes = {
+    ...MjImage.allowedAttributes,
     'mc:edit': 'string',
     'mc:hideable': 'string',
-    'alt': 'string',
-    'href': 'string',
-    'src': 'string',
-    'srcset': 'string',
-    'title': 'string',
-    'align': 'enum(left,center,right)',
-    'border': 'string',
-    'border-bottom': 'string',
-    'border-left': 'string',
-    'border-right': 'string',
-    'border-top': 'string',
-    'border-radius': 'unit(px,%)',
-    'container-background-color': 'string',
-    'padding': 'unit(px,%){1,4}',
-    'padding-bottom': 'unit(px,%)',
-    'padding-left': 'unit(px,%)',
-    'padding-right': 'unit(px,%)',
-    'padding-top': 'unit(px,%)',
-    'height': 'unit(px,%)',
-    'width': 'unit(px,%)',
   }
 
   static defaultAttributes = {
-    'align': 'center',
-    'border': '0',
-    'height': 'auto',
-    'padding': '10px 25px',
-    'target': '_blank',
+    ...MjImage.defaultAttributes,
     'mc:hideable': false,
   }
 
-  getStyles() {
-    const width = this.getContentWidth()
-    const fullWidth = this.getAttribute('full-width') === 'full-width'
-
-    const { parsedWidth, unit } = widthParser(width)
-
-    return {
-      img: {
-        'border': this.getAttribute('border'),
-        'border-radius': this.getAttribute('border-radius'),
-        'display': 'block',
-        'outline': 'none',
-        'text-decoration': 'none',
-        'min-width': fullWidth ? '100%' : null,
-        'width': fullWidth ? `${parsedWidth}${unit}` : '100%',
-        'max-width': fullWidth ? '100%' : null,
-      },
-      td: {
-        width: fullWidth ? null : `${parsedWidth}${unit}`,
-      },
-      table: {
-        'min-width': fullWidth ? '100%' : null,
-        'max-width': fullWidth ? '100%' : null,
-        'width': fullWidth ? `${parsedWidth}${unit}` : null,
-        'border-collapse': 'collapse',
-        'border-spacing': '0px',
-      },
-    }
-  }
-
-  getContentWidth() {
-    const { containerWidth } = this.context
-
-    const width = this.getAttribute('width')
-      ? min([
-          parseInt(this.getAttribute('width'), 10),
-          parseInt(containerWidth, 10),
-        ])
-      : parseInt(containerWidth, 10)
-
-    const paddingRight = this.getShorthandAttrValue('padding', 'right')
-    const paddingLeft = this.getShorthandAttrValue('padding', 'left')
-
-    const widthOverflow =
-      paddingLeft +
-      paddingRight +
-      parseFloat(width) -
-      parseInt(containerWidth, 10)
-
-    return widthOverflow > 0
-      ? parseFloat(width - widthOverflow)
-      : parseFloat(width)
-  }
-
+  // MODIFIED form https://github.com/mjmlio/mjml/blob/master/packages/mjml-image/src/index.js
   renderImage() {
+    const height = this.getAttribute('height')
+
     const img = `
       <img
         ${this.htmlAttributes({
           alt: this.getAttribute('alt'),
-          height: this.getAttribute('height'),
+          height: height && (height === 'auto' ? height : parseInt(height, 10)),
           src: this.getAttribute('src'),
           srcset: this.getAttribute('srcset'),
           style: 'img',
@@ -115,8 +44,10 @@ export default class McImage extends BodyComponent {
       return `
         <a
           ${this.htmlAttributes({
-            'href': this.getAttribute('href'),
-            'target': this.getAttribute('target'),
+            href: this.getAttribute('href'),
+            target: this.getAttribute('target'),
+            rel: this.getAttribute('rel'),
+            name: this.getAttribute('name'),
           })}
         >
           ${img}
@@ -127,35 +58,32 @@ export default class McImage extends BodyComponent {
     return img
   }
 
-  isHideable() {
-    if (this.getAttribute('mc:hideable') !== false) {
-      return true
-    }
-
-    return false
-  }
-
+  // MODIFIED form https://github.com/mjmlio/mjml/blob/master/packages/mjml-image/src/index.js
   render() {
-    let attrs = {
-      align: this.getAttribute('align'),
-      'border': '0',
-      'cellpadding': '0',
-      'cellspacing': '0',
-      'role': 'presentation',
-      'style': 'table',
-    }
-
-    if (this.isHideable()) {
-      attrs['mc:hideable'] = true
-    }
-
     return `
       <table
-        ${this.htmlAttributes(attrs)}
+        ${this.htmlAttributes({
+          border: '0',
+          cellpadding: '0',
+          cellspacing: '0',
+          role: 'presentation',
+          style: 'table',
+          class:
+            this.getAttribute('fluid-on-mobile')
+              ? 'full-width-mobile'
+              : null,
+          'mc:hideable': this.getAttribute('mc:hideable') ? 'mc:hideable' : null,
+        })}
       >
         <tbody>
           <tr>
-            <td ${this.htmlAttributes({ 'style': 'td' })}>
+            <td ${this.htmlAttributes({
+              style: 'td',
+              class:
+                this.getAttribute('fluid-on-mobile')
+                  ? 'full-width-mobile'
+                  : null,
+            })}>
               ${this.renderImage()}
             </td>
           </tr>

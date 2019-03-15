@@ -24,6 +24,12 @@
     "babel-preset-stage-0": "^6.24.1"
   },
   "dependencies": {
-    "babel-runtime": "^6.26.0"
+    "babel-runtime": "^6.26.0",
+    "mjml-button": "^4.4.0-beta.1",
+    "mjml-core": "^4.4.0-beta.1",
+    "mjml-image": "^4.4.0-beta.1",
+    "mjml-section": "^4.4.0-beta.1",
+    "mjml-text": "^4.4.0-beta.1",
+    "mjml-validator": "^4.4.0-beta.1"
   }
 }
