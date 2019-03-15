@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "./lib/mc-section.js",
+    "./lib/mc-image.js",
+    "./lib/mc-button.js",
+    "./lib/mc-text.js"
+  ]
+}
