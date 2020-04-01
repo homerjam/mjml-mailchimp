@@ -1,5 +1,5 @@
 {
-  "name": "mjml-mailchimp",
+  "name": "@principalstudio/mjml-mailchimp",
   "version": "0.0.5",
   "description": "Mailchimp compatible MJML v4 components",
   "author": {
@@ -7,7 +7,7 @@
     "email": "jameshomer85@gmail.com"
   },
   "license": "MIT",
-  "repository": "https://github.com/homerjam/mjml-mailchimp.git",
+  "repository": "https://github.com/principalstudio/mjml-mailchimp.git",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
