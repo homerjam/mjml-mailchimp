@@ -2,6 +2,7 @@
   "packages": [
     "./lib/mc-section.js",
     "./lib/mc-image.js",
+    "./lib/mc-image=2x.js",
     "./lib/mc-button.js",
     "./lib/mc-text.js"
   ]
