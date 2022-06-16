@@ -1,5 +1,6 @@
-import MjText from 'mjml-text'
-import { registerDependencies } from 'mjml-validator'
+import conditionalTag from 'mjml-core/lib/helpers/conditionalTag';
+import MjText from 'mjml-text';
+import { registerDependencies } from 'mjml-validator';
 
 registerDependencies({
   'mj-column': ['mc-text'],
@@ -8,41 +9,37 @@ registerDependencies({
 });
 
 export default class McText extends MjText {
+  static componentName = 'mc-text';
+
+  static endingTag = true;
+
   static allowedAttributes = {
     ...MjText.allowedAttributes,
     'mc:edit': 'string',
     'mc:hideable': 'string',
-  }
+  };
 
   static defaultAttributes = {
     ...MjText.defaultAttributes,
-    'mc:hideable': false
-  }
+    'mc:hideable': false,
+  };
 
-  isHideable() {
-    if (this.getAttribute('mc:hideable') !== false) {
-      return true
-    }
-
-    return false
-  }
-
-  renderContent(compound = false) {
-    let attrs = {
-      'style': 'text',
-      'mc:edit': this.getAttribute('mc:edit'),
-    }
-
-    if (compound === false && this.isHideable()) {
-      attrs['mc:hideable'] = true
-    }
-    return `
-      <div
-        ${this.htmlAttributes(attrs)}
-      >
-        ${this.getContent()}
-      </div>
-    `
+  getStyles() {
+    return {
+      text: {
+        'font-family': this.getAttribute('font-family'),
+        'font-size': this.getAttribute('font-size'),
+        'font-style': this.getAttribute('font-style'),
+        'font-weight': this.getAttribute('font-weight'),
+        'letter-spacing': this.getAttribute('letter-spacing'),
+        'line-height': this.getAttribute('line-height'),
+        'text-align': this.getAttribute('align'),
+        'text-decoration': this.getAttribute('text-decoration'),
+        'text-transform': this.getAttribute('text-transform'),
+        color: this.getAttribute('color'),
+        height: this.getAttribute('height'),
+      },
+    };
   }
 
   renderContent() {
@@ -51,11 +48,27 @@ export default class McText extends MjText {
         ${this.htmlAttributes({
           style: 'text',
           'mc:edit': this.getAttribute('mc:edit'),
-          'mc:hideable': this.getAttribute('mc:hideable') ? 'mc:hideable' : null,
+          'mc:hideable': this.getAttribute('mc:hideable')
+            ? 'mc:hideable'
+            : null,
         })}
-      >
-        ${this.getContent()}
-      </div>
-    `
+      >${this.getContent()}</div>
+    `;
+  }
+
+  render() {
+    const height = this.getAttribute('height');
+
+    return height
+      ? `
+        ${conditionalTag(`
+          <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td height="${height}" style="vertical-align:top;height:${height};">
+        `)}
+        ${this.renderContent()}
+        ${conditionalTag(`
+          </td></tr></table>
+        `)}
+      `
+      : this.renderContent();
   }
 }
