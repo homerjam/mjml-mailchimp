@@ -1,6 +1,6 @@
 {
   "name": "mjml-mailchimp",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Mailchimp compatible MJML v4 components",
   "author": {
     "name": "James Homer",
