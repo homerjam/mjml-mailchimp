@@ -2,10 +2,10 @@
   <mj-body background-color="#f1f1f1">
     <mc-section background-color="#ffffff" padding-bottom="20px" padding-top="20px">
       <mj-column width="100%" vertical-align="top">
-        <mc-image mc:edit="image" href="https://mjml.io" src="https://via.placeholder.com/150" align="center" border="none" width="150px" padding="25px"></mc-image>
+        <mc-image mc:edit="image" mc:hideable href="https://mjml.io" src="https://via.placeholder.com/150" align="center" border="none" width="150px" padding="25px"></mc-image>
       </mj-column>
     </mc-section>
-    <mc-section mc:repeatable="section" mc:variant="Section 1" mc:hideable background-color="#ffffff" padding-bottom="20px" padding-top="20px">
+    <mc-section mc:repeatable="section" mc:variant="Section 1" mc:hideable="" background-color="#ffffff" padding-bottom="20px" padding-top="20px">
       <mj-column width="100%" vertical-align="middle">
         <mc-text align="center" color="#000000" font-family="sans-serif" font-size="16px" padding="25px">Hello World</mc-text>
         <mc-button background-color="#333333" color="#FFFFFF" font-size="15px" align="center" vertical-align="middle" border="none" padding="15px 30px" border-radius="3px" href="https://mjml.io" font-family="sans-serif" padding="25px">Click here</mc-button>

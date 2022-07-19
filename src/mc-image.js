@@ -84,6 +84,7 @@ export default class McImage extends MjImage {
           style: 'img',
           title: this.getAttribute('title'),
           width: this.getContentWidth(),
+          'mc:edit': this.getAttribute('mc:edit'),
           usemap: this.getAttribute('usemap'),
           class: 'mc-image',
         })}
@@ -128,6 +129,10 @@ export default class McImage extends MjImage {
           class: this.getAttribute('fluid-on-mobile')
             ? 'mj-full-width-mobile'
             : null,
+          'mc:hideable':
+            this.getAttribute('mc:hideable') !== undefined
+              ? 'mc:hideable'
+              : null,
         })}
       >
         <tbody>
